@@ -1,0 +1,2462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Velour Interiors — Luxury Interior Design · Toronto · Dallas</title>
+  <meta name="description" content="Velour Interiors is a luxury interior design studio creating sophisticated, effortlessly livable spaces across Canada and the United States. New builds, renovations, and furnishings." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+  <style>
+    :root {
+      --ink: #100e0c;
+      --ink-soft: #1a1714;
+      --parchment: #f7f1e9;
+      --parchment-dim: #efe6da;
+      --champagne: #d4b484;
+      --champagne-bright: #e6cfa8;
+      --ember: #e07035;
+      --ember-bright: #f08a4d;
+      --velvet: #6b3034;
+      --taupe: #c4b6a5;
+      --muted: rgba(247, 241, 233, 0.88);
+      --line: rgba(198, 169, 122, 0.28);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --font-display: "Outfit", system-ui, sans-serif;
+      --font-sans: "Outfit", system-ui, sans-serif;
+      --nav-h: 6rem;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: auto; }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+    .lenis.lenis-stopped { overflow: hidden; }
+
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    body {
+      background: var(--ink);
+      color: var(--parchment);
+      font-family: var(--font-sans);
+      font-weight: 400;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .scene-image .heading-line,
+    .scene-image .display,
+    .scene-image .eyebrow,
+    .hero-brand,
+    .hero-lede,
+    .invite-content {
+      text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
+    }
+    .scene-image .phase p,
+    .scene-image .manifesto-copy p,
+    .scene-image p {
+      text-shadow: 0 1px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      content-visibility: auto;
+    }
+    a { color: inherit; text-decoration: none; cursor: pointer; }
+    button { font: inherit; border: 0; background: none; color: inherit; cursor: pointer; }
+    ul { list-style: none; }
+    ::selection { background: var(--champagne); color: var(--ink); }
+
+    .progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--velvet), var(--champagne));
+      z-index: 9998;
+      transform-origin: left;
+      will-change: width;
+    }
+
+    /* Fixed cinematic BG stage — crossfades between image scenes */
+    .bg-stage {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.9s var(--ease);
+    }
+    .bg-stage.is-visible { opacity: 1; }
+    .bg-stage-layer {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1.1s var(--ease);
+    }
+    .bg-stage-layer.is-active { opacity: 1; }
+    .bg-stage-layer img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.08);
+      transition: transform 8s linear;
+    }
+    .bg-stage-layer.is-active img { transform: scale(1); }
+    .bg-stage-veil {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at center, rgba(16,14,12,0.22), rgba(16,14,12,0.58)),
+        linear-gradient(180deg, rgba(16,14,12,0.4), rgba(16,14,12,0.5) 50%, rgba(16,14,12,0.68));
+    }
+    .scene-solid {
+      position: relative;
+      z-index: 2;
+      background: var(--ink);
+      overflow: visible;
+    }
+    .scene-image {
+      position: relative;
+      z-index: 1;
+      background: transparent;
+      overflow: visible;
+    }
+
+    /* Straight gold top edge (Studio / sections without top curve) */
+    .gold-edge-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      z-index: 6;
+      pointer-events: none;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--champagne) 8%,
+        var(--champagne-bright) 50%,
+        var(--champagne) 92%,
+        transparent 100%
+      );
+      box-shadow: 0 0 12px rgba(212, 180, 132, 0.35);
+    }
+
+    /* Generated interior icons on solid sections */
+    .solid-decor {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .solid-decor img {
+      position: absolute;
+      width: clamp(52px, 8vw, 110px);
+      height: auto;
+      opacity: 0.22;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.25));
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .solid-decor img.i-lg { width: clamp(72px, 11vw, 150px); opacity: 0.2; }
+    .solid-decor img.i-sm { width: clamp(36px, 5.5vw, 72px); opacity: 0.18; }
+    .solid-decor img.i-tall { width: clamp(28px, 4vw, 58px); opacity: 0.2; }
+
+    /* Studio placements */
+    .manifesto .solid-decor .p1 { top: 8%; left: 3%; }
+    .manifesto .solid-decor .p2 { top: 10%; right: 4%; width: clamp(64px, 9vw, 120px); }
+    .manifesto .solid-decor .p3 { top: 38%; left: 1.5%; }
+    .manifesto .solid-decor .p4 { top: 42%; right: 2%; }
+    .manifesto .solid-decor .p5 { bottom: 12%; left: 5%; }
+    .manifesto .solid-decor .p6 { bottom: 10%; right: 5%; }
+    .manifesto .solid-decor .p7 { top: 22%; left: 14%; opacity: 0.12; transform: rotate(-8deg); }
+    .manifesto .solid-decor .p8 { top: 28%; right: 13%; opacity: 0.12; transform: rotate(6deg); }
+
+    /* Services placements */
+    .services .solid-decor .p1 { top: 14%; left: 2.5%; }
+    .services .solid-decor .p2 { top: 12%; right: 3%; }
+    .services .solid-decor .p3 { top: 48%; left: 2%; }
+    .services .solid-decor .p4 { top: 52%; right: 2.5%; }
+    .services .solid-decor .p5 { bottom: 10%; left: 6%; }
+    .services .solid-decor .p6 { bottom: 12%; right: 6%; }
+    .services .solid-decor .p7 { top: 30%; left: 12%; opacity: 0.11; transform: rotate(10deg); }
+    .services .solid-decor .p8 { top: 34%; right: 12%; opacity: 0.11; transform: rotate(-7deg); }
+
+    /* About placements */
+    .about .solid-decor .p1 { top: 10%; left: 2%; }
+    .about .solid-decor .p2 { top: 8%; right: 3%; }
+    .about .solid-decor .p3 { bottom: 18%; left: 3%; }
+    .about .solid-decor .p4 { bottom: 14%; right: 3%; }
+    .about .solid-decor .p5 { top: 40%; left: 1%; }
+    .about .solid-decor .p6 { top: 44%; right: 1.5%; }
+    .about .solid-decor .p7 { top: 18%; right: 18%; opacity: 0.1; transform: rotate(12deg); }
+    .about .solid-decor .p8 { bottom: 28%; left: 16%; opacity: 0.1; transform: rotate(-9deg); }
+
+    .scene-solid > *:not(.solid-decor):not(.section-curve):not(.gold-edge-top) {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Soft arched section divisions + gold stroke along the curve */
+    .section-curve {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: clamp(3rem, 7vw, 5.5rem);
+      color: var(--ink);
+      pointer-events: none;
+      z-index: 5;
+      overflow: visible;
+      line-height: 0;
+    }
+    .section-curve svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+    .section-curve .curve-fill {
+      fill: currentColor;
+    }
+    .section-curve .curve-gold {
+      fill: none;
+      stroke: var(--champagne-bright);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+      filter: drop-shadow(0 0 6px rgba(212, 180, 132, 0.45));
+    }
+    .section-curve--gold-only {
+      color: transparent;
+      opacity: 1 !important;
+      z-index: 6;
+    }
+    .section-curve--gold-only.section-curve--top {
+      transform: translateY(-100%);
+    }
+    .section-curve--gold-only.section-curve--bottom {
+      transform: translateY(100%);
+    }
+    .section-curve--top {
+      top: 0;
+      transform: translateY(-100%);
+      transform-origin: bottom center;
+      opacity: 1;
+    }
+    .section-curve--bottom {
+      bottom: 0;
+      transform: translateY(100%);
+      transform-origin: top center;
+      opacity: 1;
+    }
+    .scene-solid.is-curved .section-curve--top,
+    footer.is-curved .section-curve--top {
+      transform: translateY(-100%);
+      opacity: 1;
+    }
+    .scene-solid.is-curved .section-curve--bottom {
+      transform: translateY(100%);
+      opacity: 1;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .section-curve--top,
+      .section-curve--bottom {
+        opacity: 1;
+        transition: none;
+      }
+    }
+
+    /* ——— Loader ——— */
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 10001;
+      background: var(--ink);
+      display: grid;
+      place-items: center;
+      transition: opacity 0.8s var(--ease), visibility 0.8s;
+    }
+    .loader.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-inner { text-align: center; }
+    .loader-brand {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      text-indent: 0.35em;
+      margin-bottom: 2rem;
+    }
+    .loader-bar {
+      width: min(220px, 50vw);
+      height: 1px;
+      background: rgba(242, 235, 226, 0.15);
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .loader-bar span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--champagne);
+    }
+    .loader-pct {
+      margin-top: 1rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--taupe);
+      text-transform: uppercase;
+    }
+
+    /* ——— Nav ——— */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 9000;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(1.25rem, 4vw, 3.5rem);
+      color: #fff;
+      mix-blend-mode: normal;
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      transition: background 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    .nav.is-scrolled {
+      background: rgba(16, 14, 12, 0.92);
+      border-bottom-color: rgba(198, 169, 122, 0.28);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      line-height: 0;
+    }
+    .nav-logo img {
+      height: clamp(48px, 6vw, 68px);
+      width: auto;
+      display: block;
+      mix-blend-mode: lighten;
+    }
+    .nav-links {
+      display: flex;
+      gap: clamp(1.5rem, 3vw, 2.75rem);
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+    .nav-links a {
+      position: relative;
+      color: #fff;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+    .nav-links a:hover, .nav-links a:focus-visible { opacity: 0.85; outline: none; }
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0; bottom: -4px;
+      width: 100%; height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.45s var(--ease);
+    }
+    .nav-links a:hover::after, .nav-links a:focus-visible::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    .nav-cta {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #fff;
+      background: var(--ember);
+      border: 1px solid var(--ember);
+      padding: 0.75rem 1.25rem;
+      transition: background 0.35s, color 0.35s, border-color 0.35s, box-shadow 0.35s;
+    }
+    .nav-cta:hover, .nav-cta:focus-visible {
+      background: var(--ember-bright);
+      border-color: var(--ember-bright);
+      color: #fff;
+      box-shadow: 0 8px 28px rgba(224, 112, 53, 0.35);
+      outline: none;
+    }
+    .nav-toggle {
+      display: none;
+      width: 2.75rem;
+      height: 2.75rem;
+      position: relative;
+      z-index: 9200;
+      color: #fff;
+    }
+    .nav-toggle span {
+      position: absolute;
+      left: 0.45rem; right: 0.45rem;
+      height: 1.5px;
+      background: currentColor;
+      transition: transform 0.35s var(--ease), opacity 0.25s, top 0.35s;
+    }
+    .nav-toggle span:nth-child(1) { top: 0.95rem; }
+    .nav-toggle span:nth-child(2) { top: 1.35rem; }
+    .nav-toggle span:nth-child(3) { top: 1.75rem; }
+    .nav-toggle.is-open span:nth-child(1) { top: 1.35rem; transform: rotate(45deg); }
+    .nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.is-open span:nth-child(3) { top: 1.35rem; transform: rotate(-45deg); }
+
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--ink);
+      z-index: 9050;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5.5rem 1.5rem 2rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.45s, visibility 0.45s;
+    }
+    .mobile-menu.is-open { opacity: 1; visibility: visible; }
+    .mobile-menu-close {
+      position: absolute;
+      top: 1.15rem;
+      right: 1.15rem;
+      width: 2.75rem;
+      height: 2.75rem;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.35);
+      display: grid;
+      place-items: center;
+      z-index: 9060;
+    }
+    .mobile-menu-close svg {
+      width: 16px;
+      height: 16px;
+    }
+    .mobile-menu a {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 10vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1.2;
+      border-bottom: 1px solid var(--line);
+      padding: 0.65rem 0;
+      color: #fff;
+    }
+    .mobile-menu .mobile-cta {
+      display: inline-flex;
+      margin-top: 1.75rem;
+      width: fit-content;
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #fff !important;
+      background: var(--ember);
+      border: 1px solid var(--ember);
+      border-bottom: 1px solid var(--ember) !important;
+      padding: 1rem 1.35rem;
+    }
+
+    /* ——— Shared ——— */
+    .eyebrow {
+      font-size: 0.62rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      font-weight: 400;
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin: 0 0 0.9rem;
+      width: 100%;
+    }
+    .eyebrow::before {
+      content: "";
+      flex: 0 0 auto;
+      width: 2rem;
+      height: 1px;
+      background: var(--champagne);
+    }
+    .display {
+      font-family: var(--font-display);
+      font-weight: 300;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+    }
+    .split-word {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: top;
+      margin-right: 0.22em;
+    }
+    .split-word > span {
+      display: inline-block;
+      transform: translateY(110%);
+    }
+    .reveal-up {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .line-draw {
+      height: 1px;
+      background: var(--line);
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+
+    /* ——— Hero ——— */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      padding: calc(var(--nav-h) + 1rem) clamp(1.25rem, 4vw, 3.5rem) clamp(2rem, 5vw, 3.5rem);
+      background: var(--ink);
+      text-align: center;
+    }
+    .hero-media {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1.4s ease;
+      will-change: opacity;
+    }
+    .hero-slide.is-active {
+      opacity: 1;
+      z-index: 1;
+    }
+    .hero-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.08);
+      transition: transform 7s linear;
+    }
+    .hero-slide.is-active img {
+      transform: scale(1);
+    }
+    .hero-dots {
+      position: absolute;
+      left: 50%;
+      bottom: clamp(1.25rem, 3vw, 2rem);
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      gap: 0.55rem;
+    }
+    .hero-dots button {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      border: 0;
+      padding: 0;
+      transition: background 0.35s, transform 0.35s;
+    }
+    .hero-dots button.is-active {
+      background: #d4b484;
+      transform: scale(1.25);
+    }
+    .hero-veil {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(16,14,12,0.62) 0%, rgba(16,14,12,0.42) 40%, rgba(16,14,12,0.78) 100%),
+        radial-gradient(ellipse at 50% 48%, rgba(16,14,12,0.72) 0%, rgba(16,14,12,0.38) 45%, rgba(16,14,12,0.2) 72%);
+      z-index: 1;
+    }
+    .hero-curtain {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      background: var(--ink);
+      transform-origin: top;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 58rem;
+      margin-inline: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55), 0 8px 40px rgba(0, 0, 0, 0.35);
+    }
+    .hero-content .btn {
+      text-shadow: none;
+    }
+    .hero .eyebrow {
+      justify-content: center;
+    }
+    .hero-brand {
+      font-family: var(--font-display);
+      font-size: clamp(4.5rem, 16vw, 12rem);
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      line-height: 0.85;
+      margin: 1.25rem 0 1.5rem;
+      text-transform: uppercase;
+    }
+    .hero-brand .split,
+    .hero-brand [aria-label] {
+      color: #d4b484;
+    }
+    .hero-brand em {
+      font-style: italic;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      color: #d4b484;
+      text-transform: none;
+      display: block;
+      font-size: 0.42em;
+      letter-spacing: 0.18em;
+      margin-top: 0.35em;
+      opacity: 0.95;
+    }
+    .hero-lede {
+      max-width: 32rem;
+      font-size: clamp(1rem, 1.6vw, 1.15rem);
+      color: var(--muted);
+      margin: 0 auto 2.25rem;
+      font-weight: 300;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem 2rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 1rem 1.75rem;
+      background: var(--ember);
+      color: #fff;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 500;
+      transition: background 0.35s, transform 0.35s var(--ease), box-shadow 0.35s;
+      box-shadow: 0 10px 32px rgba(224, 112, 53, 0.28);
+    }
+    .btn:hover, .btn:focus-visible {
+      background: var(--ember-bright);
+      box-shadow: 0 14px 40px rgba(224, 112, 53, 0.4);
+      outline: none;
+    }
+    .btn svg { width: 14px; height: 14px; transition: transform 0.35s var(--ease); }
+    .btn:hover svg { transform: translateX(4px); }
+    .hero-meta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.85rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--champagne-bright);
+      font-weight: 400;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+    }
+    .hero-meta::before,
+    .hero-meta::after {
+      content: "";
+      width: clamp(1.75rem, 4vw, 3rem);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--champagne), transparent);
+      opacity: 0.85;
+      flex: 0 0 auto;
+    }
+    .hero-meta .sep {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--ember);
+      box-shadow: 0 0 10px rgba(224, 112, 53, 0.55);
+      vertical-align: middle;
+      margin: 0 0.15rem;
+      letter-spacing: 0;
+    }
+    .hero-meta .place {
+      color: var(--parchment);
+      opacity: 0.92;
+    }
+    .hero-scroll {
+      position: absolute;
+      right: clamp(1.25rem, 4vw, 3.5rem);
+      bottom: clamp(2rem, 5vw, 3.5rem);
+      z-index: 2;
+      writing-mode: vertical-rl;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--taupe);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .hero-scroll::after {
+      content: "";
+      width: 1px; height: 4rem;
+      background: linear-gradient(to bottom, var(--champagne), transparent);
+      animation: pulse-line 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse-line {
+      0%, 100% { opacity: 0.35; transform: scaleY(0.7); transform-origin: top; }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ——— Manifesto / Studio ——— */
+    .manifesto {
+      padding: clamp(5rem, 11vw, 8rem) clamp(1.25rem, 4vw, 3.5rem);
+    }
+    .manifesto-grid {
+      display: grid;
+      gap: clamp(2rem, 5vw, 3.5rem);
+      max-width: 1180px;
+      margin: 0 auto;
+      align-items: center;
+    }
+    @media (min-width: 900px) {
+      .manifesto-grid {
+        grid-template-columns: 0.92fr 1.08fr;
+        gap: clamp(2.5rem, 5vw, 4.5rem);
+      }
+    }
+    .manifesto-photo {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4 / 5;
+      background: #1c1815;
+      border-radius: clamp(0.55rem, 1.2vw, 0.9rem);
+    }
+    .manifesto-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: inherit;
+    }
+    .manifesto-copy {
+      text-align: left;
+    }
+    .manifesto .eyebrow {
+      justify-content: flex-start;
+    }
+    .manifesto h2 {
+      font-size: clamp(2.1rem, 4.8vw, 3.6rem);
+      line-height: 1.08;
+      margin-bottom: 1.5rem;
+      max-width: 14ch;
+    }
+    .manifesto h2 em {
+      font-style: italic;
+      color: var(--ember);
+    }
+    .heading-line {
+      display: block;
+      white-space: nowrap;
+    }
+    .display em,
+    .heading-line em,
+    .text-gold {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--ember);
+    }
+    .heading-with-icon {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: clamp(0.65rem, 1.5vw, 1.15rem);
+      text-align: left;
+      width: 100%;
+      margin-top: 0;
+    }
+    .heading-with-icon .heading-icon {
+      flex: 0 0 auto;
+      width: clamp(1.75rem, 3.2vw, 2.75rem);
+      height: auto;
+      opacity: 0.92;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+    }
+    .heading-with-icon .heading-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 0;
+    }
+    .manifesto .heading-with-icon,
+    .about-copy .heading-with-icon {
+      justify-content: flex-start;
+    }
+    .portfolio-head .heading-with-icon {
+      justify-content: center;
+      align-items: flex-start;
+      gap: clamp(0.35rem, 0.8vw, 0.55rem);
+      width: auto;
+      max-width: 100%;
+    }
+    .portfolio-head .heading-with-icon .heading-text {
+      align-items: flex-start;
+      text-align: left;
+    }
+    .portfolio-head .heading-with-icon .heading-icon {
+      width: clamp(3.25rem, 6.5vw, 5.25rem);
+      margin-top: 0.12em;
+      opacity: 1;
+      filter: drop-shadow(0 2px 10px rgba(212, 180, 132, 0.35));
+    }
+    .services-intro h2,
+    .process-head h2,
+    .invite h2 {
+      text-align: center;
+    }
+    .services-intro .heading-line,
+    .process-head .heading-line,
+    .invite .heading-line {
+      display: block;
+    }
+    .services-intro .eyebrow,
+    .process-head .eyebrow,
+    .portfolio-head .eyebrow,
+    .invite-content .eyebrow {
+      justify-content: center;
+      width: auto;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .manifesto-copy,
+    .about-copy {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .process-head,
+    .invite-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .portfolio-head > div,
+    .services-intro > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .manifesto-copy p {
+      font-size: clamp(0.95rem, 1.4vw, 1.08rem);
+      color: var(--muted);
+      max-width: 38rem;
+      margin: 0 0 1.1rem;
+      line-height: 1.7;
+    }
+    .manifesto-copy p:last-of-type { margin-bottom: 0; }
+    .manifesto-locales {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.65rem 0.85rem;
+      margin-top: 1.75rem;
+      padding-top: 1.35rem;
+      border-top: 1px solid transparent;
+      border-image: linear-gradient(90deg, var(--champagne), transparent 70%) 1;
+      font-family: var(--font-sans);
+      font-style: normal;
+      font-size: 0.68rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--parchment);
+      font-weight: 400;
+    }
+    .manifesto-locales .sep {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--ember);
+      box-shadow: 0 0 10px rgba(224, 112, 53, 0.45);
+      flex: 0 0 auto;
+    }
+    .manifesto-locales .place-accent {
+      color: var(--champagne-bright);
+    }
+
+    /* ——— Portfolio horizontal ——— */
+    .portfolio {
+      overflow: visible;
+    }
+    .portfolio-pin {
+      position: relative;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding-top: clamp(4.5rem, 8vw, 6rem);
+    }
+    .portfolio-head {
+      flex: 0 0 auto;
+      padding: 0 clamp(1.25rem, 4vw, 3.5rem) 0.85rem;
+      display: grid;
+      justify-items: center;
+      text-align: center;
+      gap: 0.45rem;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+    .portfolio-head .eyebrow { justify-content: center; }
+    .portfolio-head h2 {
+      font-size: clamp(2.6rem, 7vw, 5rem);
+      line-height: 1;
+    }
+    .portfolio-head h2 em {
+      font-size: 1em;
+      font-style: italic;
+    }
+    .portfolio-head p {
+      max-width: 28rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-inline: auto;
+    }
+    .portfolio-track-wrap {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      overflow: hidden;
+    }
+    .portfolio-track {
+      display: flex;
+      align-items: center;
+      gap: clamp(1rem, 2vw, 1.75rem);
+      height: auto;
+      padding: 0 clamp(1.25rem, 4vw, 3.5rem);
+      width: max-content;
+    }
+    .project-card {
+      position: relative;
+      flex: 0 0 auto;
+      width: min(68vw, 420px);
+      height: min(52vh, 480px);
+      overflow: hidden;
+      background: #1c1815;
+      border-radius: clamp(0.55rem, 1.2vw, 0.9rem);
+    }
+    .project-card:first-child { margin-left: 0; }
+    .project-card img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+      transition: transform 0.7s var(--ease);
+    }
+    .project-card:hover img, .project-card:focus-within img {
+      transform: scale(1.04);
+    }
+    .project-meta {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 2rem 1.5rem 1.5rem;
+      background: linear-gradient(transparent, rgba(16,14,12,0.92));
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 1rem;
+    }
+    .project-meta h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 400;
+      line-height: 1;
+    }
+    .project-meta span {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--champagne);
+    }
+    .project-index {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--taupe);
+    }
+    .portfolio-note {
+      position: absolute;
+      right: clamp(1.25rem, 4vw, 3.5rem);
+      bottom: 1rem;
+      z-index: 2;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--taupe);
+      text-align: right;
+      pointer-events: none;
+    }
+
+    /* ——— Services ——— */
+    .services {
+      padding: clamp(5rem, 11vw, 9rem) clamp(1.25rem, 4vw, 3.5rem);
+    }
+    .services-intro {
+      max-width: 860px;
+      margin: 0 auto 3.5rem;
+      display: grid;
+      gap: 1.25rem;
+      text-align: center;
+      justify-items: center;
+    }
+    .services-intro .eyebrow { justify-content: center; }
+    .services-intro h2 {
+      font-size: clamp(2.2rem, 6vw, 4.8rem);
+      line-height: 1.08;
+    }
+    .services-intro p {
+      color: var(--muted);
+      max-width: 36rem;
+      font-size: 1.05rem;
+    }
+    .service-list {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-top: 1px solid var(--line);
+    }
+    .service-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1.25rem 2rem;
+      align-items: center;
+      padding: clamp(1.5rem, 3vw, 2.25rem) 0;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+      transition: color 0.35s;
+    }
+    .service-row::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(198,169,122,0.08), transparent 60%);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.55s var(--ease);
+      z-index: 0;
+    }
+    .service-row:hover::before, .service-row:focus-within::before { transform: scaleX(1); }
+    .service-row > * { position: relative; z-index: 1; }
+    .service-num {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--champagne);
+      min-width: 2rem;
+    }
+    .service-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+      font-weight: 400;
+      line-height: 1.1;
+      margin-bottom: 0.55rem;
+      color: var(--ember);
+    }
+    .service-desc {
+      grid-column: 2 / 3;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 38rem;
+      margin-top: 0;
+    }
+    .service-arrow {
+      width: 42px; height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      transition: background 0.35s, border-color 0.35s, transform 0.35s var(--ease);
+    }
+    .service-row:hover .service-arrow {
+      background: var(--champagne);
+      border-color: var(--champagne);
+      color: var(--ink);
+      transform: rotate(-45deg);
+    }
+    .service-arrow svg { width: 14px; height: 14px; }
+
+    /* ——— Process ——— */
+    .process {
+      padding: clamp(5rem, 11vw, 9rem) clamp(1.25rem, 4vw, 3.5rem);
+      color: var(--parchment);
+    }
+    .process .eyebrow { color: var(--champagne); }
+    .process .eyebrow::before { background: var(--champagne); }
+    .process-head {
+      max-width: 860px;
+      margin: 0 auto 3.5rem;
+      text-align: center;
+      display: grid;
+      justify-items: center;
+    }
+    .process-head .eyebrow { justify-content: center; }
+    .process-head h2 {
+      font-size: clamp(2.2rem, 6vw, 4.8rem);
+      margin: 0.65rem 0 1.25rem;
+      line-height: 1.08;
+    }
+    .process-head p {
+      max-width: 36rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+    .process-rail {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      gap: 0;
+    }
+    .phase {
+      display: grid;
+      grid-template-columns: 5rem 1fr;
+      gap: 1.5rem;
+      padding: 1.75rem 0;
+      border-top: 1px solid var(--line);
+      align-items: start;
+    }
+    .phase:last-child { border-bottom: 1px solid var(--line); }
+    .phase-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--champagne);
+      line-height: 1;
+    }
+    .phase h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+      font-weight: 500;
+      margin-bottom: 0.45rem;
+      color: var(--ember);
+    }
+    .phase p {
+      color: var(--muted);
+      max-width: 42rem;
+      font-size: 0.98rem;
+    }
+
+    /* ——— About ——— */
+    .about {
+      padding: clamp(5rem, 11vw, 9rem) clamp(1.25rem, 4vw, 3.5rem);
+      overflow: visible;
+    }
+    .about-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      gap: clamp(2.5rem, 5vw, 4rem);
+    }
+    @media (min-width: 900px) {
+      .about-grid {
+        grid-template-columns: 0.95fr 1.05fr;
+        align-items: center;
+      }
+    }
+    .about-visual {
+      position: relative;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      border-radius: clamp(0.55rem, 1.2vw, 0.9rem);
+    }
+    .about-visual img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
+    .about-badge {
+      position: absolute;
+      bottom: 1.25rem; left: 1.25rem;
+      background: rgba(16,14,12,0.88);
+      padding: 1rem 1.25rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      border: 1px solid var(--line);
+    }
+    .about-copy {
+      text-align: left;
+      display: grid;
+      justify-items: start;
+    }
+    .about-copy .eyebrow { justify-content: flex-start; }
+    .about-copy .eyebrow::before { display: block; }
+    .about-copy h2 {
+      font-size: clamp(2.2rem, 5.5vw, 4rem);
+      margin: 0.65rem 0 1.5rem;
+      line-height: 1.08;
+    }
+    .about-copy h2 em {
+      font-style: italic;
+      color: var(--ember);
+    }
+    .about-copy p {
+      color: var(--muted);
+      margin-bottom: 1.15rem;
+      font-size: 1.02rem;
+      max-width: 34rem;
+    }
+    .about-quote {
+      margin-top: 2rem;
+      padding-top: 1.75rem;
+      border-top: 1px solid var(--line);
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+      line-height: 1.35;
+      color: var(--parchment-dim);
+      max-width: 28rem;
+    }
+
+    /* ——— CTA ——— */
+    .invite {
+      min-height: 80vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: clamp(5rem, 10vw, 8rem) clamp(1.25rem, 4vw, 3.5rem);
+    }
+    .invite-content {
+      position: relative;
+      z-index: 2;
+      max-width: 48rem;
+    }
+    .invite h2 {
+      font-size: clamp(2.3rem, 7vw, 5.5rem);
+      margin: 0.65rem 0 1.25rem;
+      line-height: 1.08;
+    }
+    .invite h2 em {
+      font-style: italic;
+      color: var(--ember);
+    }
+    .invite p {
+      color: var(--muted);
+      margin-bottom: 2.25rem;
+      font-size: 1.1rem;
+    }
+    .invite-contacts {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: stretch;
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+      width: 100%;
+    }
+    .invite-card {
+      flex: 1 1 0;
+      min-width: 0;
+      max-width: 280px;
+      padding: 1.5rem 1.75rem;
+      background: rgba(16, 14, 12, 0.72);
+      border: 1px solid rgba(212, 180, 132, 0.45);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+      text-align: center;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--taupe);
+      transition: border-color 0.35s, transform 0.35s var(--ease), background 0.35s;
+    }
+    .invite-card:hover {
+      border-color: #d4b484;
+      background: rgba(16, 14, 12, 0.88);
+      transform: translateY(-3px);
+    }
+    .invite-card strong {
+      display: block;
+      color: #d4b484;
+      font-weight: 500;
+      margin-bottom: 0.85rem;
+      letter-spacing: 0.18em;
+    }
+    .invite-card a {
+      display: block;
+      color: var(--parchment);
+      margin-top: 0.45rem;
+      transition: color 0.3s;
+    }
+    .invite-card a:hover, .invite-card a:focus-visible {
+      color: #d4b484;
+      outline: none;
+    }
+
+    /* ——— Footer ——— */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 3rem clamp(1.25rem, 4vw, 3.5rem) 2rem;
+      border-top: 1px solid var(--line);
+      background: var(--ink);
+    }
+    .footer-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto 2.5rem;
+    }
+    .footer-brand {
+      margin-bottom: 0.85rem;
+      line-height: 0;
+    }
+    .footer-brand img {
+      height: clamp(58px, 7vw, 78px);
+      width: auto;
+      display: block;
+      mix-blend-mode: lighten;
+    }
+    .footer-tag {
+      color: var(--taupe);
+      font-size: 0.9rem;
+      max-width: 22rem;
+    }
+    .footer-cols {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2.5rem 4rem;
+    }
+    .footer-cols h4 {
+      font-size: 0.68rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+    .footer-cols a, .footer-cols p {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 0.45rem;
+      transition: color 0.3s;
+    }
+    .footer-cols a:hover, .footer-cols a:focus-visible {
+      color: var(--parchment);
+      outline: none;
+    }
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--taupe);
+    }
+
+    /* ——— Responsive ——— */
+    @media (max-width: 900px) {
+      :root { --nav-h: 4.25rem; }
+
+      .nav-links, .nav-cta { display: none; }
+      .nav-toggle { display: block; color: #fff; }
+      .nav {
+        mix-blend-mode: normal;
+        color: #fff;
+        padding: 0 1.15rem;
+        z-index: 9100;
+      }
+      .nav-logo img { height: 46px; }
+
+      .hero {
+        padding: calc(var(--nav-h) + 1.5rem) 1.15rem 2.5rem;
+        min-height: 100svh;
+      }
+      .hero-brand {
+        font-size: clamp(3.2rem, 18vw, 5.5rem);
+        margin: 1rem 0 1.1rem;
+      }
+      .hero-lede {
+        font-size: 0.98rem;
+        margin-bottom: 1.75rem;
+        max-width: 22rem;
+      }
+      .hero-actions {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .hero-scroll { display: none; }
+      .btn {
+        width: 100%;
+        max-width: 22rem;
+        justify-content: center;
+        padding: 0.95rem 1.25rem;
+      }
+
+      .heading-line {
+        display: block;
+        white-space: nowrap;
+        max-width: none;
+        margin-inline: auto;
+      }
+      .manifesto .heading-line,
+      .portfolio-head .heading-line {
+        margin-inline: 0;
+        text-align: left;
+      }
+      .manifesto .heading-with-icon .heading-text {
+        align-items: flex-start;
+      }
+      .heading-with-icon {
+        gap: 0.55rem;
+        max-width: 100%;
+      }
+      .heading-with-icon .heading-icon {
+        width: clamp(1.35rem, 6vw, 2rem);
+      }
+      .portfolio-head .heading-with-icon {
+        gap: 0.3rem;
+      }
+      .portfolio-head .heading-with-icon .heading-icon {
+        width: clamp(2.6rem, 11vw, 3.75rem);
+      }
+      .eyebrow {
+        font-size: 0.48rem !important;
+        letter-spacing: 0.18em !important;
+        font-weight: 300;
+        opacity: 0.8;
+        margin-bottom: 0.7rem;
+      }
+      .manifesto h2,
+      .services-intro h2,
+      .process-head h2,
+      .about-copy h2,
+      .invite h2 {
+        font-size: clamp(1.9rem, 8.5vw, 3rem) !important;
+        line-height: 1.12;
+        max-width: 100%;
+        letter-spacing: -0.01em;
+      }
+      .portfolio-head h2 {
+        font-size: clamp(2.6rem, 12vw, 4rem) !important;
+        line-height: 1;
+      }
+      .about-copy h2 .heading-line {
+        margin-inline: 0;
+      }
+
+      .manifesto,
+      .services,
+      .process,
+      .about,
+      .invite {
+        padding: 4rem 1.15rem;
+      }
+      .manifesto-grid {
+        max-width: 100%;
+        gap: 1.75rem;
+      }
+      .manifesto-photo {
+        aspect-ratio: 3 / 4;
+        max-height: 70vh;
+      }
+      .manifesto h2 {
+        max-width: none;
+        font-size: clamp(1.9rem, 8.5vw, 3rem) !important;
+      }
+      .services-intro,
+      .process-head,
+      .portfolio-head {
+        max-width: 100%;
+      }
+
+      .portfolio-head { padding-inline: 1.15rem; gap: 0.35rem; }
+      .portfolio-head p { font-size: 0.88rem; }
+      .portfolio-pin {
+        height: 100svh;
+        height: 100dvh;
+        padding-top: 4.25rem;
+        padding-bottom: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .portfolio-track-wrap {
+        overflow: hidden;
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        scroll-snap-type: none;
+        padding-bottom: 0;
+      }
+      .portfolio-track {
+        padding-inline: 1.15rem;
+        gap: 0.85rem;
+      }
+      .project-card {
+        width: min(78vw, 340px);
+        height: min(52vh, 460px);
+      }
+      .portfolio-note {
+        right: 1.15rem;
+        bottom: 1rem;
+        font-size: 0.58rem;
+      }
+
+      .service-row {
+        grid-template-columns: auto 1fr;
+        gap: 0.75rem 1rem;
+        align-items: start;
+        padding: 1.35rem 0;
+      }
+      .service-desc {
+        grid-column: 1 / -1;
+        margin-top: 0.15rem;
+      }
+      .service-arrow { display: none; }
+      .service-title { font-size: clamp(1.35rem, 6vw, 1.85rem); }
+
+      .phase {
+        grid-template-columns: 3rem 1fr;
+        gap: 0.85rem;
+        padding: 1.35rem 0;
+      }
+      .phase-num { font-size: 1.5rem; }
+
+      .about-grid { gap: 2rem; }
+      .about-visual { aspect-ratio: 4 / 5; max-height: 70vh; }
+      .about-copy { justify-items: start; text-align: left; }
+      .about-copy .eyebrow { justify-content: flex-start; }
+      .about-copy h2 .heading-line { margin-inline: 0; text-align: left; }
+
+      .invite { min-height: auto; padding: 4.5rem 1.15rem; overflow-x: clip; }
+      .invite-content { max-width: 100%; width: 100%; }
+      .invite-contacts {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        gap: 0.85rem;
+        width: 100%;
+        max-width: 22rem;
+        margin-inline: auto;
+      }
+      .invite-card {
+        flex: none;
+        min-width: 0;
+        max-width: none;
+        width: 100%;
+        padding: 1.25rem 1.15rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+        box-sizing: border-box;
+      }
+      .invite-card a {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      .section-curve { height: clamp(2.25rem, 9vw, 3.5rem); }
+
+      .solid-decor img { opacity: 0.12; }
+      .solid-decor .p7,
+      .solid-decor .p8 { display: none; }
+
+      .footer-top {
+        flex-direction: column;
+        gap: 2rem;
+      }
+      .footer-cols { gap: 2rem 3rem; }
+      .footer-bottom {
+        flex-direction: column;
+        gap: 0.65rem;
+        text-align: left;
+      }
+
+      .cursor { display: none !important; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-brand { letter-spacing: 0.04em; }
+      .hero-brand em { font-size: 0.38em; }
+      .eyebrow {
+        font-size: 0.44rem !important;
+        letter-spacing: 0.16em !important;
+      }
+      .heading-line { white-space: nowrap; max-width: none; }
+      .manifesto h2,
+      .services-intro h2,
+      .process-head h2,
+      .about-copy h2,
+      .invite h2 {
+        font-size: clamp(1.75rem, 8.2vw, 2.4rem) !important;
+      }
+      .portfolio-head h2 {
+        font-size: clamp(2.4rem, 13vw, 3.4rem) !important;
+      }
+      .project-card {
+        width: 82vw;
+        height: min(50vh, 420px);
+      }
+      .manifesto-copy p,
+      .services-intro p,
+      .process-head p,
+      .about-copy p {
+        font-size: 0.95rem;
+      }
+      .solid-decor .p3,
+      .solid-decor .p4 { display: none; }
+      .nav.is-scrolled { backdrop-filter: none; -webkit-backdrop-filter: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-curtain { display: none; }
+      .split-word > span, .reveal-up { transform: none !important; opacity: 1 !important; }
+      .hero-slide img { transform: none; transition: none; }
+      .hero-slide { transition: opacity 0.01s; }
+      .hero-scroll::after { animation: none; }
+      .loader { display: none; }
+    }
+
+    :focus-visible {
+      outline: 1px solid var(--champagne);
+      outline-offset: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <div class="bg-stage" id="bgStage" aria-hidden="true">
+    <div class="bg-stage-layer" data-bg="residences">
+      <img src="assets/bg-residences.jpg" alt="" width="1920" height="1080" decoding="async" />
+    </div>
+    <div class="bg-stage-layer" data-bg="process">
+      <img src="assets/bg-process.jpg" alt="" width="1920" height="1080" decoding="async" />
+    </div>
+    <div class="bg-stage-layer" data-bg="invite">
+      <img src="assets/bg-invite.jpg" alt="" width="1920" height="1080" decoding="async" />
+    </div>
+    <div class="bg-stage-veil"></div>
+  </div>
+
+  <div class="loader" id="loader" aria-live="polite">
+    <div class="loader-inner">
+      <div class="loader-brand">VELOUR</div>
+      <div class="loader-bar"><span id="loaderBar"></span></div>
+      <div class="loader-pct"><span id="loaderPct">0</span>%</div>
+    </div>
+  </div>
+
+  <header class="nav" id="nav">
+    <a href="#top" class="nav-logo" aria-label="Velour Interiors home">
+      <img src="https://velourinteriors.com/wp-content/uploads/2025/03/Velour-Logo.png" alt="Velour Interiors" width="180" height="80" decoding="async" />
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#portfolio">Portfolio</a>
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="#contact" class="nav-cta">Schedule a Consultation</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" hidden>
+    <button type="button" class="mobile-menu-close" id="mobileClose" aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <a href="#portfolio">Portfolio</a>
+    <a href="#services">Services</a>
+    <a href="#process">Process</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+    <a class="mobile-cta" href="#contact">Schedule a Consultation</a>
+  </div>
+
+  <main id="top">
+    <!-- SCENE 1: Hero -->
+    <section class="hero" aria-label="Introduction">
+      <div class="hero-media" id="heroMedia" aria-hidden="true">
+        <div class="hero-slide is-active">
+          <img src="https://velourinteriors.com/wp-content/uploads/2024/10/DSC_0455.jpg" alt="" width="1800" height="1200" fetchpriority="high" />
+        </div>
+        <div class="hero-slide">
+          <img src="https://velourinteriors.com/wp-content/uploads/2024/10/DSC_0712.jpg" alt="" width="1800" height="1200" loading="lazy" decoding="async" />
+        </div>
+        <div class="hero-slide">
+          <img src="https://velourinteriors.com/wp-content/uploads/2024/10/DSC_0500.jpg" alt="" width="1800" height="1200" loading="lazy" decoding="async" />
+        </div>
+        <div class="hero-slide">
+          <img src="https://velourinteriors.com/wp-content/uploads/2024/10/DSC_0663.jpg" alt="" width="1800" height="1200" loading="lazy" decoding="async" />
+        </div>
+        <div class="hero-slide">
+          <img src="https://velourinteriors.com/wp-content/uploads/2026/10/DSC_1397.jpg" alt="" width="1800" height="1200" loading="lazy" decoding="async" />
+        </div>
+      </div>
+      <div class="hero-veil" aria-hidden="true"></div>
+      <div class="hero-curtain" id="heroCurtain" aria-hidden="true"></div>
+      <div class="hero-dots" id="heroDots" role="tablist" aria-label="Hero slides"></div>
+      <div class="hero-content">
+        <p class="eyebrow reveal-up">Interior Design Studio</p>
+        <h1 class="hero-brand display">
+          <span class="split" data-split>Velour</span>
+          <em class="reveal-up">Interiors</em>
+        </h1>
+        <p class="hero-lede reveal-up">
+          Luxurious, sophisticated, and effortlessly livable spaces — designed from the ground up for how you actually live.
+        </p>
+        <div class="hero-actions reveal-up">
+          <a href="#contact" class="btn">
+            Book a Design Consultation
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <p class="hero-meta" aria-label="Toronto, Dallas, North America">
+            <span class="place">Toronto</span>
+            <span class="sep" aria-hidden="true"></span>
+            <span class="place">Dallas</span>
+            <span class="sep" aria-hidden="true"></span>
+            <span class="place">North America</span>
+          </p>
+        </div>
+      </div>
+      <div class="hero-scroll" aria-hidden="true">Scroll</div>
+    </section>
+
+    <!-- SCENE 2: Studio -->
+    <section class="manifesto scene-solid" id="studio" aria-labelledby="manifesto-title" data-scene="solid">
+      <div class="gold-edge-top" aria-hidden="true"></div>
+      <div class="solid-decor" aria-hidden="true">
+        <img class="p1 i-lg" src="assets/icons/icon-arch.png" alt="" loading="lazy" decoding="async" />
+        <img class="p2 i-sm" src="assets/icons/icon-chandelier.png" alt="" loading="lazy" decoding="async" />
+        <img class="p4 i-tall" src="assets/icons/icon-lamp.png" alt="" loading="lazy" decoding="async" />
+        <img class="p6 i-sm" src="assets/icons/icon-frame.png" alt="" loading="lazy" decoding="async" />
+      </div>
+      <div class="manifesto-grid">
+        <div class="manifesto-photo reveal-up">
+          <img
+            src="https://velourinteriors.com/wp-content/uploads/elementor/thumbs/Gia-Oberoi-qvk18nj1lv501n8jbahu36rzciv9q5xdlixbd7dce0.jpg"
+            alt="Gia Oberoi, founder of Velour Interiors"
+            width="900"
+            height="1125"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div class="manifesto-copy">
+          <p class="eyebrow reveal-up">The Studio</p>
+          <h2 id="manifesto-title" class="display reveal-up heading-with-icon">
+            <img class="heading-icon" src="assets/icons/hicon-studio.png" alt="" width="64" height="64" loading="lazy" decoding="async" />
+            <span class="heading-text">
+              <span class="heading-line">Every space should <em>feel</em></span>
+              <span class="heading-line"><em>deeply personal.</em></span>
+            </span>
+          </h2>
+          <p class="reveal-up">
+            Velour Interiors is an interior design studio serving clients across Canada and the United States. We specialize in creating luxurious, sophisticated, and effortlessly livable spaces that balance timeless aesthetics with everyday functionality.
+          </p>
+          <p class="reveal-up">
+            We believe every space should feel deeply personal. Rather than following a one-size-fits-all approach, each project is thoughtfully developed from the ground up to reflect our clients’ individual tastes, lifestyles, and aspirations.
+          </p>
+          <p class="reveal-up">
+            Our holistic approach brings every essential element of the design process together. From establishing a cohesive creative direction and optimizing layouts and spatial flow to developing architectural details and selecting finishes, fixtures, lighting, furniture, accessories, and artwork, every decision is made with intention.
+          </p>
+          <p class="reveal-up">
+            To ensure the design vision is carried through seamlessly, we remain closely involved at every stage; from initial concepts and design development to construction coordination, installation, furniture placement, and final styling.
+          </p>
+          <p class="reveal-up">
+            Our goal is to create distinctive interiors that feel elevated, functional, beautifully considered, and uniquely yours.
+          </p>
+          <p class="manifesto-locales reveal-up" aria-label="Toronto, Dallas, Projects Across North America">
+            <span>Toronto</span>
+            <span class="sep" aria-hidden="true"></span>
+            <span>Dallas</span>
+            <span class="sep" aria-hidden="true"></span>
+            <span class="place-accent">Projects Across North America</span>
+          </p>
+        </div>
+      </div>
+      <div class="section-curve section-curve--bottom" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path class="curve-fill" d="M0,0 C360,100 1080,100 1440,0 L1440,0 L0,0 Z"/>
+          <path class="curve-gold" d="M0,0 C360,100 1080,100 1440,0"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- SCENE 3: Portfolio — signature horizontal -->
+    <section class="portfolio scene-image" id="portfolio" aria-labelledby="portfolio-title" data-scene="image" data-bg="residences">
+      <div class="section-curve section-curve--top section-curve--gold-only" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path class="curve-gold" d="M0,120 C360,20 1080,20 1440,120"/>
+        </svg>
+      </div>
+      <div class="portfolio-pin" id="portfolioPin">
+        <div class="portfolio-head">
+          <div>
+            <p class="eyebrow reveal-up">Selected Work</p>
+            <h2 id="portfolio-title" class="display heading-with-icon">
+              <img class="heading-icon" src="assets/icons/hicon-residences.png" alt="" width="72" height="72" loading="lazy" decoding="async" />
+              <span class="heading-text"><em class="text-gold">Residences</em></span>
+            </h2>
+          </div>
+          <p class="reveal-up">New builds, renovations, and furnishings — each home composed as a functional work of art.</p>
+        </div>
+        <div class="portfolio-track-wrap">
+        <div class="portfolio-track" id="portfolioTrack">
+          <a class="project-card" href="https://velourinteriors.com/portfolio/trumpet/" target="_blank" rel="noopener">
+            <img src="https://velourinteriors.com/wp-content/uploads/2026/10/DSC_1444.jpg" alt="Trumpet residence interior" loading="lazy" decoding="async" width="800" height="1000" />
+            <div class="project-meta">
+              <div>
+                <span>Residential</span>
+                <h3>Trumpet</h3>
+              </div>
+              <div class="project-index">01</div>
+            </div>
+          </a>
+          <a class="project-card" href="https://velourinteriors.com/portfolio/yorkville/" target="_blank" rel="noopener">
+            <img src="https://velourinteriors.com/wp-content/uploads/2024/10/DSC_0435-1022x1536.jpg" alt="Yorkville residence interior" loading="lazy" decoding="async" width="800" height="1000" />
+            <div class="project-meta">
+              <div>
+                <span>Toronto</span>
+                <h3>Yorkville</h3>
+              </div>
+              <div class="project-index">02</div>
+            </div>
+          </a>
+          <a class="project-card" href="https://velourinteriors.com/portfolio/abigail/" target="_blank" rel="noopener">
+            <img src="https://velourinteriors.com/wp-content/uploads/2024/10/DSC_1183.jpg" alt="Abigail residence interior" loading="lazy" decoding="async" width="800" height="1000" />
+            <div class="project-meta">
+              <div>
+                <span>Residential</span>
+                <h3>Abigail</h3>
+              </div>
+              <div class="project-index">03</div>
+            </div>
+          </a>
+          <a class="project-card" href="https://velourinteriors.com/portfolio/walkercleave/" target="_blank" rel="noopener">
+            <img src="https://velourinteriors.com/wp-content/uploads/2024/10/DSC_7838.jpg" alt="Walkercleave residence interior" loading="lazy" decoding="async" width="800" height="1000" />
+            <div class="project-meta">
+              <div>
+                <span>Residential</span>
+                <h3>Walkercleave</h3>
+              </div>
+              <div class="project-index">04</div>
+            </div>
+          </a>
+          <a class="project-card" href="https://velourinteriors.com/portfolio/heer/" target="_blank" rel="noopener">
+            <img src="https://velourinteriors.com/wp-content/uploads/2024/10/DSC_1334.jpg" alt="Heer residence interior" loading="lazy" decoding="async" width="800" height="1000" />
+            <div class="project-meta">
+              <div>
+                <span>Residential</span>
+                <h3>Heer</h3>
+              </div>
+              <div class="project-index">05</div>
+            </div>
+          </a>
+          <a class="project-card" href="https://velourinteriors.com/portfolio/fulmer/" target="_blank" rel="noopener">
+            <img src="https://velourinteriors.com/wp-content/uploads/2024/10/DSC_1475.jpg" alt="Fulmer residence interior" loading="lazy" decoding="async" width="800" height="1000" />
+            <div class="project-meta">
+              <div>
+                <span>Residential</span>
+                <h3>Fulmer</h3>
+              </div>
+              <div class="project-index">06</div>
+            </div>
+          </a>
+        </div>
+        </div>
+        <p class="portfolio-note">Drag · Scroll · Explore the rooms</p>
+      </div>
+      <div class="section-curve section-curve--bottom section-curve--gold-only" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path class="curve-gold" d="M0,0 C360,100 1080,100 1440,0"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- SCENE 4: Services -->
+    <section class="services scene-solid" id="services" aria-labelledby="services-title" data-scene="solid">
+      <div class="solid-decor" aria-hidden="true">
+        <img class="p1 i-lg" src="assets/icons/icon-chandelier.png" alt="" loading="lazy" decoding="async" />
+        <img class="p2 i-lg" src="assets/icons/icon-sofa.png" alt="" loading="lazy" decoding="async" />
+        <img class="p3 i-tall" src="assets/icons/icon-lamp.png" alt="" loading="lazy" decoding="async" />
+        <img class="p4 i-tall" src="assets/icons/icon-column.png" alt="" loading="lazy" decoding="async" />
+        <img class="p5" src="assets/icons/icon-vase.png" alt="" loading="lazy" decoding="async" />
+        <img class="p6" src="assets/icons/icon-frame.png" alt="" loading="lazy" decoding="async" />
+        <img class="p7 i-sm" src="assets/icons/icon-key.png" alt="" loading="lazy" decoding="async" />
+        <img class="p8 i-sm" src="assets/icons/icon-chair.png" alt="" loading="lazy" decoding="async" />
+      </div>
+      <div class="section-curve section-curve--top" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path class="curve-fill" d="M0,120 C360,20 1080,20 1440,120 L1440,120 L0,120 Z"/>
+          <path class="curve-gold" d="M0,120 C360,20 1080,20 1440,120"/>
+        </svg>
+      </div>
+      <div class="services-intro">
+        <div>
+          <p class="eyebrow reveal-up">What We Offer</p>
+          <h2 id="services-title" class="display">
+            <span class="heading-line">Pretty without <em>function</em></span>
+            <span class="heading-line">is just <em>eye candy.</em></span>
+          </h2>
+        </div>
+        <p class="reveal-up">
+          We blend modern, bold design with timeless elements to create bespoke interiors that endure. Every space has a story — we bring yours to life across Canada and the USA.
+        </p>
+      </div>
+      <div class="service-list">
+        <article class="service-row reveal-up">
+          <span class="service-num">01</span>
+          <div>
+            <h3 class="service-title">Full-Service Residential Design</h3>
+            <p class="service-desc">New construction and renovations from concept through installation — interiors, exteriors, partner introductions, investment planning, and seamless project management.</p>
+          </div>
+          <div class="service-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
+        </article>
+        <article class="service-row reveal-up">
+          <span class="service-num">02</span>
+          <div>
+            <h3 class="service-title">Furnishing &amp; Décor</h3>
+            <p class="service-desc">Space planning, finishes, furniture procurement, custom fabrication, and styling — transformative results without extensive structural change.</p>
+          </div>
+          <div class="service-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
+        </article>
+        <article class="service-row reveal-up">
+          <span class="service-num">03</span>
+          <div>
+            <h3 class="service-title">Hourly Design Consultation</h3>
+            <p class="service-desc">Focused guidance on color, furniture placement, materials, and decisions — flexible expertise for projects of any scale.</p>
+          </div>
+          <div class="service-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
+        </article>
+      </div>
+      <div class="section-curve section-curve--bottom" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path class="curve-fill" d="M0,0 C360,100 1080,100 1440,0 L1440,0 L0,0 Z"/>
+          <path class="curve-gold" d="M0,0 C360,100 1080,100 1440,0"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- SCENE 5: Process -->
+    <section class="process scene-image" id="process" aria-labelledby="process-title" data-scene="image" data-bg="process">
+      <div class="section-curve section-curve--top section-curve--gold-only" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path class="curve-gold" d="M0,120 C360,20 1080,20 1440,120"/>
+        </svg>
+      </div>
+      <div class="process-head">
+        <p class="eyebrow reveal-up">How We Work</p>
+        <h2 id="process-title" class="display">
+          <span class="heading-line">A calm path from <em>inquiry</em></span>
+          <span class="heading-line">to <em>installation.</em></span>
+        </h2>
+        <p class="reveal-up">We evaluate goals, budget, and function — then oversee every phase so the vision lands beautifully, with less stress.</p>
+      </div>
+      <div class="process-rail">
+        <article class="phase reveal-up">
+          <div class="phase-num">01</div>
+          <div>
+            <h3>Project Inquiry</h3>
+            <p>A complimentary 20-minute call with Gia to discuss your project and whether we are the right fit.</p>
+          </div>
+        </article>
+        <article class="phase reveal-up">
+          <div class="phase-num">02</div>
+          <div>
+            <h3>Consultation &amp; Proposal</h3>
+            <p>An in-person deep dive into aesthetics and function, followed by a flat-fee proposal and client agreement.</p>
+          </div>
+        </article>
+        <article class="phase reveal-up">
+          <div class="phase-num">03</div>
+          <div>
+            <h3>Discovery &amp; Design</h3>
+            <p>Inspiration, schematic planning, materials, CAD, samples, and presentations — schematics become living plans.</p>
+          </div>
+        </article>
+        <article class="phase reveal-up">
+          <div class="phase-num">04</div>
+          <div>
+            <h3>Procurement &amp; Management</h3>
+            <p>Purchase orders, trade coordination, site meetings, and deliveries managed so nothing is left to chance.</p>
+          </div>
+        </article>
+        <article class="phase reveal-up">
+          <div class="phase-num">05</div>
+          <div>
+            <h3>Installation &amp; Support</h3>
+            <p>Furniture, rugs, lighting, art, and styling placed with care — plus post-install support for lasting satisfaction.</p>
+          </div>
+        </article>
+      </div>
+      <div class="section-curve section-curve--bottom section-curve--gold-only" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path class="curve-gold" d="M0,0 C360,100 1080,100 1440,0"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- SCENE 6: About -->
+    <section class="about scene-solid" id="about" aria-labelledby="about-title" data-scene="solid">
+      <div class="solid-decor" aria-hidden="true">
+        <img class="p1 i-lg" src="assets/icons/icon-arch.png" alt="" loading="lazy" decoding="async" />
+        <img class="p2 i-lg" src="assets/icons/icon-chandelier.png" alt="" loading="lazy" decoding="async" />
+        <img class="p3" src="assets/icons/icon-chair.png" alt="" loading="lazy" decoding="async" />
+        <img class="p4" src="assets/icons/icon-sofa.png" alt="" loading="lazy" decoding="async" />
+        <img class="p5 i-tall" src="assets/icons/icon-column.png" alt="" loading="lazy" decoding="async" />
+        <img class="p6 i-tall" src="assets/icons/icon-lamp.png" alt="" loading="lazy" decoding="async" />
+        <img class="p7 i-sm" src="assets/icons/icon-vase.png" alt="" loading="lazy" decoding="async" />
+        <img class="p8 i-sm" src="assets/icons/icon-frame.png" alt="" loading="lazy" decoding="async" />
+      </div>
+      <div class="section-curve section-curve--top" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path class="curve-fill" d="M0,120 C360,20 1080,20 1440,120 L1440,120 L0,120 Z"/>
+          <path class="curve-gold" d="M0,120 C360,20 1080,20 1440,120"/>
+        </svg>
+      </div>
+      <div class="about-grid">
+        <div class="about-visual reveal-up">
+          <img
+            src="https://velourinteriors.com/wp-content/uploads/2024/10/DSC_0500.jpg"
+            alt="Detail of a Velour Interiors designed interior with layered finishes"
+            loading="lazy"
+            width="1200"
+            height="1500"
+          />
+          <div class="about-badge">Founder · Gia Oberoi</div>
+        </div>
+        <div class="about-copy">
+          <p class="eyebrow reveal-up">Principal Designer</p>
+          <h2 id="about-title" class="display heading-with-icon">
+            <img class="heading-icon" src="assets/icons/hicon-about.png" alt="" width="64" height="64" loading="lazy" decoding="async" />
+            <span class="heading-text">
+              <span class="heading-line">Rational <em>architecture.</em></span>
+              <span class="heading-line"><em>Emotional design.</em></span>
+            </span>
+          </h2>
+          <p class="reveal-up">
+            Born and raised in Chandigarh — Le Corbusier’s modernist masterpiece — Gia draws on cultural richness and architectural history. Her signature blends modern and eclectic elements with luxurious finishes and custom furnishings.
+          </p>
+          <p class="reveal-up">
+            Known for bold color, layered pattern, and global influence, she designs spaces that nurture lifestyle and well-being — each vignette a functional work of art.
+          </p>
+          <blockquote class="about-quote reveal-up">
+            “Our goal is to create distinctive interiors that feel elevated, functional, beautifully considered, and uniquely yours.”
+          </blockquote>
+        </div>
+      </div>
+      <div class="section-curve section-curve--bottom" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path class="curve-fill" d="M0,0 C360,100 1080,100 1440,0 L1440,0 L0,0 Z"/>
+          <path class="curve-gold" d="M0,0 C360,100 1080,100 1440,0"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- SCENE 7: Invite -->
+    <section class="invite scene-image" id="contact" aria-labelledby="invite-title" data-scene="image" data-bg="invite">
+      <div class="section-curve section-curve--top section-curve--gold-only" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path class="curve-gold" d="M0,120 C360,20 1080,20 1440,120"/>
+        </svg>
+      </div>
+      <div class="invite-content">
+        <p class="eyebrow reveal-up">Begin</p>
+        <h2 id="invite-title" class="display">
+          <span class="heading-line">Let’s <em>compose</em></span>
+          <span class="heading-line"><em>your next chapter.</em></span>
+        </h2>
+        <p class="reveal-up">Schedule a design consultation. Tell us about your home, your rituals, and the life you want the rooms to hold.</p>
+        <a href="mailto:info@velourinterior.ca" class="btn reveal-up">
+          Schedule a Consultation
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <div class="invite-contacts reveal-up">
+          <div class="invite-card">
+            <strong>Canada</strong>
+            <a href="tel:+16479693282">647 969 3282</a>
+            <a href="mailto:info@velourinterior.ca">info@velourinterior.ca</a>
+          </div>
+          <div class="invite-card">
+            <strong>United States</strong>
+            <a href="tel:+14693684659">469 368 4659</a>
+            <a href="mailto:hello@velourinterior.com">hello@velourinterior.com</a>
+          </div>
+        </div>
+      </div>
+      <div class="section-curve section-curve--bottom section-curve--gold-only" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path class="curve-gold" d="M0,0 C360,100 1080,100 1440,0"/>
+        </svg>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="section-curve section-curve--top" aria-hidden="true">
+      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path class="curve-fill" d="M0,120 C360,20 1080,20 1440,120 L1440,120 L0,120 Z"/>
+          <path class="curve-gold" d="M0,120 C360,20 1080,20 1440,120"/>
+        </svg>
+    </div>
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">
+          <img src="https://velourinteriors.com/wp-content/uploads/2025/03/Velour-Logo.png" alt="Velour Interiors" width="200" height="90" decoding="async" />
+        </div>
+        <p class="footer-tag">Luxury interior design for homes that feel as exceptional as they look — Toronto, Dallas, and across North America.</p>
+      </div>
+      <div class="footer-cols">
+        <div>
+          <h4>Explore</h4>
+          <a href="#portfolio">Portfolio</a>
+          <a href="#services">Services</a>
+          <a href="#process">Process</a>
+          <a href="#about">About</a>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <a href="mailto:info@velourinterior.ca">Canada Studio</a>
+          <a href="mailto:hello@velourinterior.com">US Studio</a>
+          <a href="https://velourinteriors.com/" target="_blank" rel="noopener">velourinteriors.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Velour Interiors</span>
+      <span>New Builds · Renovations · Furnishings</span>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      /* Nav background after leaving hero */
+      const navEl = document.getElementById("nav");
+      const heroEl = document.querySelector(".hero");
+      function updateNavBg() {
+        if (!navEl || !heroEl) return;
+        const pastHero = window.scrollY > heroEl.offsetHeight - 80;
+        navEl.classList.toggle("is-scrolled", pastHero);
+      }
+      window.addEventListener("scroll", updateNavBg, { passive: true });
+      updateNavBg();
+
+      /* Mobile nav */
+      const toggle = document.getElementById("navToggle");
+      const mobileMenu = document.getElementById("mobileMenu");
+      const mobileClose = document.getElementById("mobileClose");
+
+      function setMobileMenu(open) {
+        toggle.classList.toggle("is-open", open);
+        mobileMenu.classList.toggle("is-open", open);
+        mobileMenu.hidden = !open;
+        toggle.setAttribute("aria-expanded", String(open));
+        toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+        document.body.style.overflow = open ? "hidden" : "";
+      }
+
+      toggle.addEventListener("click", () => {
+        setMobileMenu(!toggle.classList.contains("is-open"));
+      });
+      if (mobileClose) {
+        mobileClose.addEventListener("click", () => setMobileMenu(false));
+      }
+      mobileMenu.querySelectorAll("a").forEach((a) => {
+        a.addEventListener("click", () => setMobileMenu(false));
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && toggle.classList.contains("is-open")) {
+          setMobileMenu(false);
+        }
+      });
+
+      /* Hero word split only */
+      document.querySelectorAll(".hero [data-split]").forEach((el) => {
+        const text = el.textContent.trim();
+        el.setAttribute("aria-label", text);
+        el.innerHTML = text.split(/\s+/).map((word) =>
+          `<span class="split-word" aria-hidden="true"><span>${word}</span></span>`
+        ).join(" ");
+      });
+
+      /* Fast loader */
+      const loader = document.getElementById("loader");
+      const loaderBar = document.getElementById("loaderBar");
+      const loaderPct = document.getElementById("loaderPct");
+
+      function runLoader() {
+        return new Promise((resolve) => {
+          if (reduced) {
+            loader.classList.add("is-done");
+            resolve();
+            return;
+          }
+          let p = 0;
+          const iv = setInterval(() => {
+            p = Math.min(100, p + 18);
+            loaderBar.style.width = p + "%";
+            loaderPct.textContent = Math.floor(p);
+            if (p >= 100) {
+              clearInterval(iv);
+              loader.classList.add("is-done");
+              resolve();
+            }
+          }, 40);
+        });
+      }
+
+      function initMotion() {
+        gsap.registerPlugin(ScrollTrigger);
+        ScrollTrigger.config({ ignoreMobileResize: true });
+
+        const isMobile = window.matchMedia("(max-width: 900px), (pointer: coarse)").matches;
+        let lenis = null;
+        if (!reduced && !isMobile && typeof Lenis !== "undefined") {
+          lenis = new Lenis({
+            duration: 0.9,
+            smoothWheel: true,
+            touchMultiplier: 1.2,
+          });
+
+          function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+          }
+          requestAnimationFrame(raf);
+          lenis.on("scroll", ScrollTrigger.update);
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+          anchor.addEventListener("click", (e) => {
+            const id = anchor.getAttribute("href");
+            if (!id || id === "#") return;
+            const target = document.querySelector(id);
+            if (!target) return;
+            e.preventDefault();
+            if (lenis) lenis.scrollTo(target, { offset: -20 });
+            else target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+          });
+        });
+
+        const progress = document.getElementById("progress");
+        ScrollTrigger.create({
+          start: 0,
+          end: "max",
+          onUpdate: (self) => {
+            progress.style.width = (self.progress * 100) + "%";
+          },
+        });
+
+        const curtain = document.getElementById("heroCurtain");
+        if (!reduced) {
+          const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
+          intro
+            .to(curtain, { scaleY: 0, duration: 0.9, ease: "power4.inOut" }, 0)
+            .to(".hero-slide.is-active img", { scale: 1, duration: 1.4, ease: "power2.out" }, 0.1)
+            .to(".hero .split-word > span", { y: 0, duration: 0.85, stagger: 0.05 }, 0.25)
+            .to(".hero .reveal-up", { opacity: 1, y: 0, duration: 0.75, stagger: 0.08 }, 0.4);
+        } else {
+          gsap.set([".hero .split-word > span", ".hero .reveal-up"], { opacity: 1, y: 0 });
+          if (curtain) curtain.style.display = "none";
+        }
+
+        /* Hero image slideshow (same idea as live site) */
+        const slides = Array.from(document.querySelectorAll(".hero-slide"));
+        const dotsWrap = document.getElementById("heroDots");
+        let slideIndex = 0;
+        let slideTimer = null;
+
+        function goToSlide(next) {
+          if (!slides.length) return;
+          slides[slideIndex].classList.remove("is-active");
+          if (dotsWrap) dotsWrap.children[slideIndex]?.classList.remove("is-active");
+          slideIndex = (next + slides.length) % slides.length;
+          slides[slideIndex].classList.add("is-active");
+          if (dotsWrap) dotsWrap.children[slideIndex]?.classList.add("is-active");
+          const activeImg = slides[slideIndex].querySelector("img");
+          if (activeImg && !reduced) {
+            gsap.fromTo(activeImg, { scale: 1.08 }, { scale: 1, duration: 6.5, ease: "none" });
+          }
+        }
+
+        if (dotsWrap && slides.length) {
+          slides.forEach((_, i) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.setAttribute("aria-label", "Show slide " + (i + 1));
+            if (i === 0) btn.classList.add("is-active");
+            btn.addEventListener("click", () => {
+              goToSlide(i);
+              restartSlideshow();
+            });
+            dotsWrap.appendChild(btn);
+          });
+        }
+
+        function restartSlideshow() {
+          if (slideTimer) clearInterval(slideTimer);
+          if (reduced || slides.length < 2) return;
+          slideTimer = setInterval(() => goToSlide(slideIndex + 1), 5000);
+        }
+        restartSlideshow();
+
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) {
+            if (slideTimer) clearInterval(slideTimer);
+          } else {
+            restartSlideshow();
+          }
+        });
+
+        /* Batch section reveals — one trigger per section */
+        if (!reduced) {
+          gsap.utils.toArray("section:not(.hero)").forEach((section) => {
+            const items = section.querySelectorAll(".reveal-up");
+            if (!items.length) return;
+            gsap.to(items, {
+              opacity: 1,
+              y: 0,
+              duration: 0.7,
+              stagger: 0.06,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: section,
+                start: "top 78%",
+                once: true,
+              },
+            });
+          });
+        } else {
+          gsap.set(".reveal-up", { opacity: 1, y: 0 });
+        }
+
+        /* Horizontal portfolio — same pin + scrub behavior on mobile & desktop */
+        const pin = document.getElementById("portfolioPin");
+        const track = document.getElementById("portfolioTrack");
+        if (pin && track && !reduced) {
+          const getScroll = () => Math.max(0, track.scrollWidth - window.innerWidth);
+          gsap.to(track, {
+            x: () => -getScroll(),
+            ease: "none",
+            scrollTrigger: {
+              trigger: pin,
+              start: "top top",
+              end: () => "+=" + Math.max(getScroll() * (isMobile ? 1.15 : 1), window.innerWidth * 0.75),
+              pin: true,
+              scrub: isMobile ? 0.55 : 0.4,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+        } else if (track) {
+          track.style.transform = "none";
+          if (pin) pin.style.height = "auto";
+        }
+
+        /* Alternating image / solid scene backgrounds */
+        const stage = document.getElementById("bgStage");
+        const layers = stage ? Array.from(stage.querySelectorAll(".bg-stage-layer")) : [];
+        let activeBg = null;
+
+        function setSceneBg(name) {
+          if (!stage || activeBg === name) return;
+          activeBg = name;
+          if (!name) {
+            stage.classList.remove("is-visible");
+            return;
+          }
+          stage.classList.add("is-visible");
+          layers.forEach((layer) => {
+            layer.classList.toggle("is-active", layer.dataset.bg === name);
+          });
+        }
+
+        document.querySelectorAll("[data-scene]").forEach((section) => {
+          const type = section.getAttribute("data-scene");
+          const bg = section.getAttribute("data-bg");
+          ScrollTrigger.create({
+            trigger: section,
+            start: "top center",
+            end: "bottom center",
+            onToggle: (self) => {
+              if (!self.isActive) return;
+              setSceneBg(type === "image" ? bg : null);
+            },
+          });
+        });
+
+        /* Curved dividers reveal when solid sections enter view */
+        document.querySelectorAll(".scene-solid, footer").forEach((section) => {
+          if (reduced) {
+            section.classList.add("is-curved");
+            return;
+          }
+          ScrollTrigger.create({
+            trigger: section,
+            start: "top 85%",
+            once: true,
+            onEnter: () => section.classList.add("is-curved"),
+          });
+        });
+
+        window.addEventListener("load", () => ScrollTrigger.refresh(), { once: true });
+      }
+
+      runLoader().then(() => requestAnimationFrame(initMotion));
+    })();
+  </script>
+</body>
+</html>
