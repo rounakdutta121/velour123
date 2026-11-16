@@ -1323,6 +1323,73 @@
       outline: none;
     }
 
+    /* ——— Fixed contact + top ——— */
+    .fab-stack {
+      position: fixed;
+      right: clamp(0.85rem, 2.5vw, 1.5rem);
+      bottom: clamp(0.85rem, 2.5vw, 1.5rem);
+      z-index: 9200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .fab {
+      width: 3rem;
+      height: 3rem;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ember);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 28px rgba(224, 112, 53, 0.35), 0 4px 14px rgba(0, 0, 0, 0.35);
+      transition: transform 0.3s var(--ease), background 0.3s, box-shadow 0.3s, opacity 0.3s;
+    }
+    .fab svg {
+      width: 1.15rem;
+      height: 1.15rem;
+      display: block;
+    }
+    .fab:hover,
+    .fab:focus-visible {
+      background: var(--ember-bright);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 14px 34px rgba(224, 112, 53, 0.45), 0 6px 16px rgba(0, 0, 0, 0.35);
+      outline: none;
+    }
+    .fab--top {
+      background: rgba(16, 14, 12, 0.88);
+      border-color: rgba(212, 180, 132, 0.55);
+      color: var(--champagne-bright);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+    }
+    .fab--top.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .fab--top:hover,
+    .fab--top:focus-visible {
+      background: rgba(26, 23, 20, 0.96);
+      color: #fff;
+      border-color: var(--champagne);
+      transform: translateY(-2px) scale(1.04);
+    }
+    @media (max-width: 900px) {
+      .fab {
+        width: 2.75rem;
+        height: 2.75rem;
+      }
+      .fab svg {
+        width: 1.05rem;
+        height: 1.05rem;
+      }
+    }
+
     /* ——— Footer ——— */
     footer {
       position: relative;
@@ -2178,6 +2245,26 @@
     </div>
   </footer>
 
+  <div class="fab-stack" aria-label="Quick actions">
+    <a class="fab" href="tel:+16479693282" aria-label="Call Velour Interiors">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+      </svg>
+    </a>
+    <a class="fab" href="mailto:info@velourinterior.ca" aria-label="Email Velour Interiors">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+        <path d="m22 6-10 7L2 6"/>
+      </svg>
+    </a>
+    <button type="button" class="fab fab--top" id="backToTop" aria-label="Back to top">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 19V5"/>
+        <path d="m5 12 7-7 7 7"/>
+      </svg>
+    </button>
+  </div>
+
   <script>
     (function () {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -2193,6 +2280,15 @@
       }
       window.addEventListener("scroll", updateNavBg, { passive: true });
       updateNavBg();
+
+      /* Fixed call / email / back to top */
+      const backToTop = document.getElementById("backToTop");
+      function updateBackToTop() {
+        if (!backToTop) return;
+        backToTop.classList.toggle("is-visible", window.scrollY > 480);
+      }
+      window.addEventListener("scroll", updateBackToTop, { passive: true });
+      updateBackToTop();
 
       /* Mobile nav */
       const toggle = document.getElementById("navToggle");
@@ -2277,6 +2373,16 @@
           }
           requestAnimationFrame(raf);
           lenis.on("scroll", ScrollTrigger.update);
+          lenis.on("scroll", ({ scroll }) => {
+            if (backToTop) backToTop.classList.toggle("is-visible", scroll > 480);
+          });
+        }
+
+        if (backToTop) {
+          backToTop.addEventListener("click", () => {
+            if (lenis) lenis.scrollTo(0, { immediate: reduced });
+            else window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+          });
         }
 
         document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
